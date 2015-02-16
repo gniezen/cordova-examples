@@ -55,6 +55,21 @@ module.exports = [
         "clobbers": [
             "navigator.gyroscope"
         ]
+    },
+    {
+        "file": "plugins/com.megster.cordova.bluetoothserial/www/bluetoothSerial.js",
+        "id": "com.megster.cordova.bluetoothserial.bluetoothSerial",
+        "clobbers": [
+            "window.bluetoothSerial"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.vibration/www/vibration.js",
+        "id": "org.apache.cordova.vibration.notification",
+        "merges": [
+            "navigator.notification",
+            "navigator"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -64,7 +79,9 @@ module.exports.metadata =
     "org.apache.cordova.device-orientation": "0.3.10",
     "org.apache.cordova.geolocation": "0.3.11",
     "org.awokenwell.proximity": "0.1.1",
-    "org.dartlang.phonegap.gyroscope": "0.0.2"
+    "org.dartlang.phonegap.gyroscope": "0.0.2",
+    "com.megster.cordova.bluetoothserial": "0.3.5",
+    "org.apache.cordova.vibration": "0.3.12"
 }
 // BOTTOM OF METADATA
 });

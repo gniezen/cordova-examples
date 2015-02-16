@@ -26,13 +26,16 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>Hello World</title>
+
+        <!-- Custom code starts here -->
    
         <script type="text/javascript" charset="utf-8">
 
-        // The watch id references the current `watchHeading`
-        var watchID, watchID2 = null;
-   
-        // Start watching the compass
+        var watchID = null;
+        var watchID3 = null;
+        var watchID4 = null;   
+
+        // Start watching the sensors
         function startWatch() {
 
             // Update compass every 3 seconds
@@ -40,68 +43,115 @@
 
             watchID = navigator.compass.watchHeading(onSuccess, onError, options);
 
-
             navigator.proximity.enableSensor();
 
             setInterval(function(){
               navigator.proximity.getProximityState(proximitySuccess);
-            }, 1000);
+            }, 1000); //update proximity every second
 
-            watchID2 = navigator.gyroscope.watchAngularSpeed(gyroSuccess, gyroError, options);
+            // Disabled as HTC Wildfire S does not have gyro sensor
+            // var watchID2 = navigator.gyroscope.watchAngularSpeed(gyroSuccess, gyroError, options);
+
+            watchID3 = navigator.accelerometer.watchAcceleration(accelSuccess, accelError, options);
+
+            watchID4 = navigator.geolocation.watchPosition(gpsSuccess, gpsError, { timeout: 30000, enableHighAccuracy: false });
 
         }
 
-        // Stop watching the compass
+        // Stop watching the sensors
         function stopWatch() {
             if (watchID) {
                 navigator.compass.clearWatch(watchID);
                 watchID = null;
             }
+
+            if (watchID3) {
+                navigator.accelerometer.clearWatch(watchID3);
+                watchID3 = null;
+            }
+
+            if (watchID4) {
+                navigator.geolocation.clearWatch(watchID4);
+                watchID4 = null;
+            }
         }
 
-        // onSuccess: Get the current heading
-        //
+        // Get the current heading
         function onSuccess(heading) {
             var element = document.getElementById('heading');
             element.innerHTML = 'Heading: ' + heading.magneticHeading;
         }
 
+        // Failed to get the heading
+        function onError(compassError) {
+            alert('Compass error: ' + compassError.code);
+        }
+
+        // Get proximity (near/far)
         function proximitySuccess(state) {
             var element = document.getElementById('proximity');
             element.innerHTML = 'Proximity: ' + (state ? 'near' : 'far');
         };
 
-        // onError: Failed to get the heading
-        //
-        function onError(compassError) {
-            alert('Compass error: ' + compassError.code);
-        }
-
+        // Get gyroscope data
         function gyroSuccess(speed) {
             var element = document.getElementById('gyro');
             element.innerHTML = 'Gyro: ' + 'x: ' + speed.x + ', y: ' + speed.y + ', z: ' + speed.z;
         };
 
+        // Failed to get gyroscope data
         function gyroError(error) {
             alert('Gyro error:' + error.code + ', ' + error.message);
         };
 
+        // Get accelerometer data
+        function accelSuccess(acceleration) {
+            var element = document.getElementById('accel');
+            element.innerHTML ='Acceleration X: ' + acceleration.x + '\n' +
+                  'Acceleration Y: ' + acceleration.y + '\n' +
+                  'Acceleration Z: ' + acceleration.z + '\n' +
+                  'Timestamp: '      + acceleration.timestamp + '\n';
+        };
+
+        // Failed to get accelerometer data
+        function accelError(error) {
+            alert('Accelerometer error:' + error.code + ', ' + error.message);
+        };
+
+        // Get A-GPS data
+        function gpsSuccess(position) {
+            var element = document.getElementById('geolocation');
+            element.innerHTML = 'Latitude: ' + position.coords.latitude + '<br />' + 'Longitude: ' + position.coords.longitude + '<br />';
+        }
+
+        // Failed to get A-GPS data
+        function gpsError(error) {
+            alert('GPS error:' + error.code + ', ' + error.message);
+        }
 
 
     </script>
+
+    <!-- Custom code ends here -->
+
   </head>
   <body>
-        <div class="app">
-            <h1>Apache Cordova</h1>
+            <h1>Cordova Sensors</h1>
             <div id="deviceready" class="blink">
                 <p class="event listening">Connecting to Device</p>
                 <p class="event received">Device is Ready</p>
             </div>
+
+            <!-- Custom code starts here -->
             <div id="heading">Waiting for heading...</div>
             <div id="proximity">Waiting for proximity...</div>
             <div id="gyro">Waiting for gyro...</div>
+            <div id="geolocation">Waiting for geolocation...</div>
+            <div id="accel">Waiting for accelerometer..</div>
             <button onclick="startWatch();">Start Watching</button>
             <button onclick="stopWatch();">Stop Watching</button>
+            <button onclick="navigator.vibrate([500,1000,1000,500,2000]);">Vibrate</button>
+            <!-- Custom code ends here -->
 
         </div>
         <script type="text/javascript" src="cordova.js"></script>
